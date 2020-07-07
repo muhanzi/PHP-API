@@ -4,14 +4,16 @@
 header ("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header ("Access-Control-Allow-Methods: POST");
-header("Content-Type: application/json");
+header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 if($_SERVER['REQUEST_METHOD'] != "POST") {
-    http_response_code(405); // method not allowed
     echo json_encode(array("message" => "only POST method is allowed","status" => 405));
-    exit(405);
+    exit(405); // method not allowed
 }
+
+// get posted data
+$data = json_decode(file_get_contents("php://input"));
 
 include_once 'session.php';
 include_once '../config/core.php';  // just to create database and users table if they don't exits
@@ -22,9 +24,6 @@ $db_connection = new databaseConnection();
 $connection = $db_connection->getConnection();
   
 $user = new User($connection);
-  
-// get posted data
-$data = json_decode(file_get_contents("php://input"));
 
 // validate
 if(isset($data->email) && isset($data->password)){
@@ -38,7 +37,6 @@ if(isset($data->email) && isset($data->password)){
     
         if(isset($sign_in_results['status'])){
             if($sign_in_results['status'] === 200){
-                http_response_code(200);
                 echo json_encode(array(
                     "message" => $sign_in_results['message'],
                     "status" => 200,
@@ -56,28 +54,24 @@ if(isset($data->email) && isset($data->password)){
                     )
                 ));
             }else{
-                http_response_code($sign_in_results['status']);
                 echo json_encode(array(
                     "message" => $sign_in_results['message'],
                     "status" => $sign_in_results['status']
                 ));
             }
         }else{
-            http_response_code(500);
             echo json_encode(array(
                 "message" => "an error occurred",
                 "status" => 500
             )); 
         }
     }else{
-        http_response_code(400);
         echo json_encode(array(
             "message" => "user data has empty fields",
             "status" => 400
         )); 
     }
 }else{
-    http_response_code(400);
     echo json_encode(array(
         "message" => "user credentials are required",
         "status" => 400
