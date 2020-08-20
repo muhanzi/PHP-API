@@ -23,7 +23,10 @@ if ($conn->connect_error) {
 // create database if it is not already existing
 $sql_create_db = "CREATE DATABASE IF NOT EXISTS " . $dbname . "";
 if ($conn->query($sql_create_db) === TRUE) {
-    // Database created successfully
+    // Database created successfully // don't put here any response or echo // because it may create a confusion because this file is also included in others like signin.php or signup.php which have their own responses
+    // that will be a problem because if a request is sent to signin.php // it may produce 2 responses // one from this file and another one from signin.php
+    // will confuse the response data if this file is also included in others
+    // !!!!!!!!!! we should only produce one response per request 
 } else {
     echo "Something went wrong. failed to create database Error: ". $conn->error;
 }
@@ -48,6 +51,10 @@ $sql_create_table = "CREATE TABLE IF NOT EXISTS " . $table_name . " (
 
 if ($conn->query($sql_create_table) === TRUE) {
     // users table created successfully
+    // don't put here any response or echo // because it may create a confusion because this file is also included in others like signin.php or signup.php which have their own responses
+    // that will be a problem because if a request is sent to signin.php // it may produce 2 responses // one from this file and another one from signin.php
+    // will confuse the response data if this file is also included in others
+    // !!!!!!!!!! we should only produce one response per request 
 } else {
     echo "Something went wrong. failed to create table. Error: ". $conn->error;
 }    
